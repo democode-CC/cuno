@@ -18,11 +18,10 @@ cuno-code/
 ├── my_parser.py                  # Command-line argument parser
 ├── utils.py                      # Seed and helper utilities
 ├── data/
-│   ├── data_loader.py            # Dataset loading (Cora, CiteSeer, PubMed, and additional homophilous / heterophilous datasets)
+│   ├── data_loader.py            # Loads Cora, CiteSeer, PubMed with standard Planetoid splits
 │   └── __init__.py
 ├── gnn_model/
-│   ├── homogeneous_models.py     # GCN, GAT, GraphSAGE
-│   └── knowledge_graph_models.py # RGCN, CompGCN (kept for completeness; the paper reports homogeneous graphs only)
+│   └── homogeneous_models.py     # GCN, GAT, GraphSAGE
 ├── unlearning_methods/
 │   ├── cuno_ours.py              # CUNO (curriculum + distribution-level NPO); also `curriculum_ga`, `npo_ga`
 │   ├── retrain.py                # Retrain-from-scratch reference
@@ -92,15 +91,11 @@ export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
 
 ## Datasets
 
-Datasets download automatically the first time they are used. All datasets are cached under `data/<name>/`.
+The three node-classification benchmarks used in the paper are downloaded automatically the first time they are requested. All datasets are cached under `data/<name>/`.
 
 | Dataset | Task | Notes |
 |---|---|---|
-| `Cora`, `CiteSeer`, `PubMed` | Node classification | Standard Planetoid splits (used in the paper) |
-| `AmazonComputers`, `CoauthorCS`, `Actor` | Node classification | Deterministic 60/20/20 splits |
-| `RomanEmpire`, `AmazonRatings` | Node classification | Official 10 fixed 50/25/25 splits from Platonov et al. (ICLR 2023); split 0 is used |
-| `AmazonPhoto` | Node classification | Shchur et al. (2018) protocol: 20 labelled nodes per class for training, 30 per class for validation |
-| `FB15k237`, `WN18RR` | Knowledge-graph completion | Loaders provided; the paper does not report these experiments |
+| `Cora`, `CiteSeer`, `PubMed` | Node classification | Standard Planetoid splits |
 
 ---
 
@@ -209,7 +204,7 @@ Model checkpoints are cached under `stored_model/<Dataset>_<Model>_trained.pt`. 
 
 - Every configuration uses identical hyperparameters across datasets and architectures. There is no per-dataset tuning.
 - Base models are trained once per (dataset, architecture) and shared across the five random seeds; only the forget-set sampling and unlearning optimisation are seed-dependent.
-- The paper's main results are node-classification-only on `Cora`, `CiteSeer` and `PubMed`. The additional dataset loaders shipped here (`AmazonComputers`, `CoauthorCS`, `Actor`, `RomanEmpire`, `AmazonRatings`, `AmazonPhoto`) are provided for extended experimentation; they are not part of the reported main table.
+- The paper's main results are node-classification-only on `Cora`, `CiteSeer` and `PubMed`. This release ships loaders for those three datasets and the three GNN architectures (GCN, GAT, GraphSAGE) reported in the paper.
 - Certified graph unlearning methods (Chien et al. 2022; Wu et al. 2023; Yi and Wei 2025; Dong et al. 2024) are discussed in the paper but not included as baselines here, because their certificates require convexity assumptions that do not hold for the non-convex GCN/GAT/GraphSAGE objectives studied.
 
 ---

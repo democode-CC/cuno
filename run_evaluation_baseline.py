@@ -311,7 +311,6 @@ def run_baseline_comparison(args, methods_override=None, skip_kg=False,
                             datasets_override=None, result_prefix=None):
     """Run baseline methods comparison across all datasets and models.
     methods_override:  if provided (e.g. ['gif']), only run these methods; otherwise run all.
-    skip_kg:           if True, skip KG datasets (FB15k237, WN18RR).
     datasets_override: if provided, replace the default dataset list entirely.
     result_prefix:     prefix for output CSV/JSON filenames (default: 'baseline_comparison').
     """
@@ -328,18 +327,12 @@ def run_baseline_comparison(args, methods_override=None, skip_kg=False,
     print()
     
     # Define experiment configurations
-    KG_DATASETS = ['FB15k237', 'WN18RR']
     if datasets_override is not None:
         datasets = datasets_override
-        print(f"✓ Using custom dataset list: {datasets}")
+        print(f"Using custom dataset list: {datasets}")
     else:
-        datasets = ['Cora', 'CiteSeer', 'PubMed', 'FB15k237', 'WN18RR']
-    if skip_kg:
-        datasets = [d for d in datasets if d not in KG_DATASETS]
-        print("✓ Skipping KG: only homogeneous datasets")
-        print()
+        datasets = ['Cora', 'CiteSeer', 'PubMed']
     homogeneous_models = ['GCN', 'GAT', 'GraphSAGE']
-    kg_models = ['RGCN', 'CompGCN']
     models_filter = None
     if getattr(args, 'only_this_config', False):
         datasets = [args.dataset]
@@ -379,8 +372,8 @@ def run_baseline_comparison(args, methods_override=None, skip_kg=False,
     
     for dataset in datasets:
         # Determine if KG and select appropriate models
-        is_kg = dataset in KG_DATASETS
-        models = kg_models if is_kg else homogeneous_models
+        is_kg = False  # KG datasets are not shipped in this release
+        models = homogeneous_models
         if models_filter is not None:
             models = [m for m in models if m in models_filter]
         if not models:
@@ -781,15 +774,9 @@ if __name__ == '__main__':
     if getattr(args, 'methods', None) is not None:
         methods_override = [m.strip() for m in args.methods.split(',')]
 
-    # Homogeneous datasets are the ones reported in the paper; knowledge-graph
-    # experiments are provided for completeness but not part of the main results.
-    # Use --no_skip_kg to include FB15k237 and WN18RR.
-    skip_kg = True if getattr(args, 'skip_kg', None) is None else args.skip_kg
-
     results_df = run_baseline_comparison(
         args,
         methods_override=methods_override,
-        skip_kg=skip_kg,
     )
     
     print("\n" + "="*80)

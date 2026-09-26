@@ -1,6 +1,6 @@
 """
 Learning Phase: Initial training of GNN models
-Supports both homogeneous graphs and knowledge graphs
+Supports homogeneous graphs for node classification on Cora, CiteSeer, PubMed.
 """
 
 import os
@@ -10,7 +10,7 @@ import torch.optim as optim
 from tqdm import tqdm
 import numpy as np
 
-from gnn_model import GCN, GAT, GraphSAGE, RGCN, CompGCN
+from gnn_model import GCN, GAT, GraphSAGE
 from data import load_dataset, split_data
 
 
@@ -27,28 +27,11 @@ def create_model(args, data, is_kg):
         model: Initialized GNN model
     """
     if is_kg:
-        # Knowledge graph models
-        num_entities = data['num_entities']
-        num_relations = data['num_relations']
-        
-        if args.gnn_model == 'RGCN':
-            model = RGCN(
-                num_entities=num_entities,
-                num_relations=num_relations,
-                hidden_dim=args.hidden_dim,
-                num_layers=args.num_layers,
-                dropout=args.dropout
-            )
-        elif args.gnn_model == 'CompGCN':
-            model = CompGCN(
-                num_entities=num_entities,
-                num_relations=num_relations,
-                hidden_dim=args.hidden_dim,
-                num_layers=args.num_layers,
-                dropout=args.dropout
-            )
-        else:
-            raise ValueError(f"Model {args.gnn_model} not supported for knowledge graphs. Use RGCN or CompGCN.")
+        raise NotImplementedError(
+            "Knowledge-graph training is not shipped in this release; "
+            "the paper's main results are node classification on "
+            "Cora, CiteSeer, and PubMed."
+        )
     else:
         # Homogeneous graph models
         input_dim = data.num_features

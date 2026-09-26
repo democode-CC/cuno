@@ -14,15 +14,12 @@ def create_parser():
     
     # ==================== Dataset & Model Configuration ====================
     parser.add_argument('--dataset', type=str, default='Cora',
-                      choices=['Cora', 'CiteSeer', 'PubMed',
-                               'AmazonComputers', 'CoauthorCS', 'Actor',
-                               'RomanEmpire', 'AmazonRatings', 'AmazonPhoto',
-                               'FB15k237', 'WN18RR'],
+                      choices=['Cora', 'CiteSeer', 'PubMed'],
                       help='Dataset name (homogeneous / additional / knowledge graphs)')
     
     parser.add_argument('--gnn_model', type=str, default='GCN',
-                      choices=['GCN', 'GAT', 'GraphSAGE', 'RGCN', 'CompGCN'],
-                      help='GNN model architecture (GCN/GAT/GraphSAGE for homogeneous, RGCN/CompGCN for KG)')
+                      choices=['GCN', 'GAT', 'GraphSAGE'],
+                      help='GNN model architecture')
     
     # ==================== Learning Phase ====================
     parser.add_argument('--learning_epochs', type=int, default=200,
@@ -178,7 +175,7 @@ def create_parser():
     parser.add_argument('--skip_kg', dest='skip_kg', action='store_true', default=None,
                       help='Run only on homogeneous graphs (Cora, CiteSeer, PubMed); skip KG')
     parser.add_argument('--no_skip_kg', dest='skip_kg', action='store_false', default=None,
-                      help='Run on all datasets including KG (FB15k237, WN18RR)')
+                      help='(deprecated, no-op in this release)')
     
     parser.add_argument('--seed', type=int, default=42,
                       help='Random seed for reproducibility')
